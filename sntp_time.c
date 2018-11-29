@@ -24,7 +24,7 @@
  */
 
 #include <esp_log.h>
-#include <apps/sntp/sntp.h>
+#include <lwip/apps/sntp.h>
 #include "sntp_time.h"
 
 #define TIME_RES_SEC 1000
