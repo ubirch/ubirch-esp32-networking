@@ -39,4 +39,7 @@ void sntp_update(void);
  */
 uint64_t get_time_us();
 
+void time_status(void);
+
+
 #endif /* UBIRCH_SNTP_TIME_H */
