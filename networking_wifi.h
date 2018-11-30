@@ -30,9 +30,9 @@
 #define READY_BIT       BIT15
 
 struct Wifi_login {
-    char ssid[64];
+    char *ssid;
     size_t ssid_length;
-    char pwd[64];
+    char *pwd;
     size_t pwd_length;
 };
 
