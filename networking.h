@@ -1,8 +1,8 @@
 /*!
  * @file
- * @brief TODO: ${FILE}
+ * @brief Networking functionality.
  *
- * ...
+ * Provides access to Wifi and Ethernet functionality.
  *
  * @author Matthias L. Jugel
  * @date   2018-11-29
@@ -27,5 +27,6 @@
 #define UBIRCH_NETWORKING_H
 
 #include "networking_wifi.h"
+#include "networking_eth.h"
 
 #endif //UBIRCH_NETWORKING_H

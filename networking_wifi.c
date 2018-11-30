@@ -34,6 +34,8 @@ static const char *TAG = "WIFI";
 /* FreeRTOS event group to signal when we are connected & ready to make a request */
 EventGroupHandle_t wifi_event_group;
 
+system_event_cb_t nested_callback = NULL;
+
 static esp_err_t event_handler(void *ctx, system_event_t *event)
 {
     switch(event->event_id) {
@@ -57,9 +59,13 @@ static esp_err_t event_handler(void *ctx, system_event_t *event)
             ESP_LOGI(TAG, "unknown/not implemented");
             break;
     }
-    return ESP_OK;
-}
 
+    if(nested_callback == NULL) {
+        return ESP_OK;
+    } else {
+        return nested_callback(ctx, event);
+    }
+}
 
 void initialise_wifi(void) {
     esp_log_level_set("wifi", ESP_LOG_WARN);
@@ -69,7 +75,7 @@ void initialise_wifi(void) {
     }
     tcpip_adapter_init();
     wifi_event_group = xEventGroupCreate();
-    ESP_ERROR_CHECK( esp_event_loop_init(event_handler, NULL) );
+    nested_callback = esp_event_loop_set_cb(event_handler, NULL);
     wifi_init_config_t cfg = WIFI_INIT_CONFIG_DEFAULT();
     ESP_ERROR_CHECK( esp_wifi_init(&cfg) );
     ESP_ERROR_CHECK( esp_wifi_set_storage(WIFI_STORAGE_RAM) );
@@ -78,18 +84,18 @@ void initialise_wifi(void) {
     initialized = true;
 }
 
-bool wifi_join(struct Wifi_login wifi, int timeout_ms) {
+esp_err_t wifi_join(struct Wifi_login wifi, int timeout_ms) {
     wifi_config_t wifi_config = {0};
     strncpy((char *) wifi_config.sta.ssid, wifi.ssid, wifi.ssid_length);
     if (wifi.pwd) {
         strncpy((char *) wifi_config.sta.password, wifi.pwd, wifi.pwd_length);
     }
 
-    ESP_ERROR_CHECK( esp_wifi_set_mode(WIFI_MODE_STA) );
+    ESP_ERROR_CHECK(esp_wifi_set_mode(WIFI_MODE_STA) );
     ESP_ERROR_CHECK(esp_wifi_set_config(ESP_IF_WIFI_STA, &wifi_config));
     ESP_ERROR_CHECK(esp_wifi_connect());
 
     int bits = xEventGroupWaitBits(wifi_event_group, CONNECTED_BIT,
                                    false, true, timeout_ms / portTICK_PERIOD_MS);
-    return (bits & CONNECTED_BIT) != 0;
+    return (bits & CONNECTED_BIT) != 0 ? ESP_OK : ESP_FAIL;
 }

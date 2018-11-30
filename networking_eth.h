@@ -1,10 +1,11 @@
 /*!
- * @file    sntp_time.h
- * @brief   Synchronize the system clock with the SNTP time and provide
- *          functions to read the current time
+ * @file
+ * @brief TODO: ${FILE}
  *
- * @author Waldemar Gruenwald
- * @date   2018-10-10
+ * ...
+ *
+ * @author Matthias L. Jugel
+ * @date   2018-11-26
  *
  * @copyright &copy; 2018 ubirch GmbH (https://ubirch.com)
  *
@@ -22,21 +23,15 @@
  * limitations under the License.
  * ```
  */
+#ifndef UBIRCH_NETWORKING_ETH_H
+#define UBIRCH_NETWORKING_ETH_H
 
-
-#ifndef UBIRCH_SNTP_TIME_H
-#define UBIRCH_SNTP_TIME_H
-
-/*!
- * Get the time from NTP server and set up RTC.
- */
-void sntp_update(void);
+#include <esp_err.h>
 
 /*!
- * Get the current time in microseconds accuracy.
- *
- * @return time in microseconds
+ * Initialize the ethernet adapter.
+ * @return ESP_OK or error code.
  */
-uint64_t get_time_us();
+esp_err_t init_ethernet();
 
-#endif /* UBIRCH_SNTP_TIME_H */
+#endif //UBIRCH_NETWORKING_ETH_H

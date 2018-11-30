@@ -50,6 +50,6 @@ void initialise_wifi(void);
  * @return true, if connection sucessful
  * @return false, if error occured
  */
-bool wifi_join(struct Wifi_login wifi, int timeout_ms);
+esp_err_t wifi_join(struct Wifi_login wifi, int timeout_ms);
 
 #endif /* UBIRCH_NETWORKING_WIFI_H */
