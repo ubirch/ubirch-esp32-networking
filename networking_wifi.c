@@ -36,12 +36,12 @@ EventGroupHandle_t wifi_event_group;
 
 system_event_cb_t nested_callback = NULL;
 
-static esp_err_t event_handler(void *ctx, system_event_t *event)
-{
+static esp_err_t event_handler(void *ctx, system_event_t *event) {
     switch(event->event_id) {
         case SYSTEM_EVENT_STA_START:
             ESP_LOGI(TAG, "wifi started");
-            ESP_ERROR_CHECK( esp_wifi_connect() );
+            // TODO this is an issue if the configure step is not fast enough
+            //ESP_ERROR_CHECK( esp_wifi_connect() );
             break;
         case SYSTEM_EVENT_STA_CONNECTED:
             ESP_LOGI(TAG, "wifi is connected now");
@@ -56,15 +56,10 @@ static esp_err_t event_handler(void *ctx, system_event_t *event)
             ESP_LOGD(TAG, "wifi disconnected");
             break;
         default:
-            ESP_LOGI(TAG, "unknown/not implemented");
-            break;
+            return nested_callback(ctx, event);
     }
 
-    if(nested_callback == NULL) {
-        return ESP_OK;
-    } else {
-        return nested_callback(ctx, event);
-    }
+    return ESP_OK;
 }
 
 void initialise_wifi(void) {
@@ -75,8 +70,7 @@ void initialise_wifi(void) {
     }
     tcpip_adapter_init();
     wifi_event_group = xEventGroupCreate();
-//    nested_callback = esp_event_loop_set_cb(event_handler, NULL);
-    ESP_ERROR_CHECK(esp_event_loop_init(event_handler, NULL));
+    nested_callback = esp_event_loop_set_cb(event_handler, NULL);
     wifi_init_config_t cfg = WIFI_INIT_CONFIG_DEFAULT();
     ESP_ERROR_CHECK( esp_wifi_init(&cfg) );
     ESP_ERROR_CHECK( esp_wifi_set_storage(WIFI_STORAGE_RAM) );
