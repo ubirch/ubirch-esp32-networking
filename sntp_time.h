@@ -32,14 +32,4 @@
  */
 void sntp_update(void);
 
-/*!
- * Get the current time in microseconds accuracy.
- *
- * @return time in microseconds
- */
-uint64_t get_time_us();
-
-void time_status(void);
-
-
 #endif /* UBIRCH_SNTP_TIME_H */

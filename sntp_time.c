@@ -27,7 +27,6 @@
 #include <lwip/apps/sntp.h>
 #include "sntp_time.h"
 
-#define TIME_RES_SEC 1000
 #define TAG "SNTP"
 
 static int initialized = 0;
@@ -52,32 +51,10 @@ void sntp_update(void) {
         time(&now);
         localtime_r(&now, &timeinfo);
     }
-    ESP_LOGI(TAG, "TIME = %02d.%02d.%04d %02d:%02d:%02d\r\n",
-             timeinfo.tm_mday, timeinfo.tm_mon, (1900 + timeinfo.tm_year),
+    ESP_LOGI(TAG, "TIME = %02d.%02d.%04d %02d:%02d:%02d UTC\r\n",
+             timeinfo.tm_mday, timeinfo.tm_mon + 1, (1900 + timeinfo.tm_year),
              timeinfo.tm_hour, timeinfo.tm_min, timeinfo.tm_sec);
 
     setenv("TZ", "UTC", 1);
     tzset();
-}
-
-uint64_t get_time_us() {
-    time_t now = time(NULL);
-    int64_t timer = esp_timer_get_time();
-    uint64_t time_us =
-            ((uint64_t) (now) * TIME_RES_SEC) + (((uint64_t) (timer) * TIME_RES_SEC / 1000000) % TIME_RES_SEC);
-    ESP_LOGD(TAG, "= %llu", time_us);
-    return time_us;
-}
-
-
-void time_status(void) {
-    time_t now = 0;
-    struct tm timeinfo = {0};
-
-    time(&now);
-    localtime_r(&now, &timeinfo);
-
-    printf("Current time: %02d.%02d.%04d %02d:%02d:%02d GMT\r\n", timeinfo.tm_mday, timeinfo.tm_mon,
-           (1900 + timeinfo.tm_year),
-           timeinfo.tm_hour, timeinfo.tm_min, timeinfo.tm_sec);
 }
