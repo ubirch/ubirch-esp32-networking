@@ -70,6 +70,7 @@ void initialise_wifi(void) {
     }
     tcpip_adapter_init();
     wifi_event_group = xEventGroupCreate();
+    esp_event_loop_init(NULL, NULL);
     nested_callback = esp_event_loop_set_cb(event_handler, NULL);
     wifi_init_config_t cfg = WIFI_INIT_CONFIG_DEFAULT();
     ESP_ERROR_CHECK( esp_wifi_init(&cfg) );
