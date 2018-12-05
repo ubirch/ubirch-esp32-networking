@@ -29,31 +29,33 @@
 #include <freertos/event_groups.h>
 
 #include "networking_wifi.h"
+#include "networking.h"
 
 static const char *TAG = "WIFI";
-/* FreeRTOS event group to signal when we are connected & ready to make a request */
-EventGroupHandle_t wifi_event_group;
 
-system_event_cb_t nested_callback = NULL;
+/* FreeRTOS event group to signal when we are connected & ready to make a request */
+EventGroupHandle_t network_event_group;
+
+static system_event_cb_t nested_callback = NULL;
 
 static esp_err_t event_handler(void *ctx, system_event_t *event) {
     switch(event->event_id) {
         case SYSTEM_EVENT_STA_START:
-            ESP_LOGI(TAG, "wifi started");
-            // TODO this is an issue if the configure step is not fast enough
-            //ESP_ERROR_CHECK( esp_wifi_connect() );
+            ESP_LOGI(TAG, "started");
             break;
         case SYSTEM_EVENT_STA_CONNECTED:
-            ESP_LOGI(TAG, "wifi is connected now");
+            ESP_LOGI(TAG, "connected now");
             break;
         case SYSTEM_EVENT_STA_GOT_IP:
-            xEventGroupSetBits(wifi_event_group, CONNECTED_BIT);
-            ESP_LOGI(TAG, "wifi got ip:" IPSTR " ", IP2STR(&event->event_info.got_ip.ip_info.ip));
+            ESP_LOGI(TAG, "got ip:"
+                    IPSTR
+                    " ", IP2STR(&event->event_info.got_ip.ip_info.ip));
+            xEventGroupSetBits(network_event_group, NETWORK_STA_READY);
             break;
         case SYSTEM_EVENT_STA_DISCONNECTED:
+            ESP_LOGD(TAG, "disconnected");
             esp_wifi_connect();
-            xEventGroupClearBits(wifi_event_group, (CONNECTED_BIT | READY_BIT));
-            ESP_LOGD(TAG, "wifi disconnected");
+            xEventGroupClearBits(network_event_group, NETWORK_STA_READY);
             break;
         default:
             return nested_callback(ctx, event);
@@ -69,7 +71,7 @@ void initialise_wifi(void) {
         return;
     }
     tcpip_adapter_init();
-    wifi_event_group = xEventGroupCreate();
+    network_event_group = xEventGroupCreate();
     esp_event_loop_init(NULL, NULL);
     nested_callback = esp_event_loop_set_cb(event_handler, NULL);
     wifi_init_config_t cfg = WIFI_INIT_CONFIG_DEFAULT();
@@ -91,7 +93,7 @@ esp_err_t wifi_join(struct Wifi_login wifi, int timeout_ms) {
     ESP_ERROR_CHECK(esp_wifi_set_config(ESP_IF_WIFI_STA, &wifi_config));
     ESP_ERROR_CHECK(esp_wifi_connect());
 
-    int bits = xEventGroupWaitBits(wifi_event_group, CONNECTED_BIT,
+    int bits = xEventGroupWaitBits(network_event_group, NETWORK_STA_READY,
                                    false, true, timeout_ms / portTICK_PERIOD_MS);
-    return (bits & CONNECTED_BIT) != 0 ? ESP_OK : ESP_FAIL;
+    return (bits & NETWORK_STA_READY) != 0 ? ESP_OK : ESP_FAIL;
 }

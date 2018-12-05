@@ -26,13 +26,16 @@
 #include <tcpip_adapter.h>
 #include <esp_event_loop.h>
 #include <eth_phy/phy_lan8720.h>
+#include <esp_log.h>
 #include "networking_eth.h"
+#include "networking.h"
 
 // TODO make pins configurable
 #define PIN_SMI_MDC   23
 #define PIN_SMI_MDIO  18
 #define PIN_PHY_POWER 12
 
+static const char *TAG = "ETH";
 
 static void phy_device_power_enable_via_gpio(bool enable) {
     if (!enable) {
@@ -63,13 +66,36 @@ static void eth_gpio_config_rmii(void) {
     phy_rmii_smi_configure_pins(PIN_SMI_MDC, PIN_SMI_MDIO);
 }
 
+static system_event_cb_t nested_callback = NULL;
+
+static esp_err_t event_handler(void *ctx, system_event_t *event) {
+    switch (event->event_id) {
+        case SYSTEM_EVENT_ETH_GOT_IP:
+            ESP_LOGI(TAG, "got ip: "
+                    IPSTR
+                    " ", IP2STR(&event->event_info.got_ip.ip_info.ip));
+            xEventGroupSetBits(network_event_group, NETWORK_ETH_READY);
+            break;
+        case SYSTEM_EVENT_ETH_DISCONNECTED:
+            ESP_LOGD(TAG, "disconnected");
+            xEventGroupClearBits(network_event_group, NETWORK_ETH_READY);
+            break;
+
+        default:
+            if (nested_callback)
+                return nested_callback(ctx, event);
+    }
+
+    return ESP_OK;
+}
 
 esp_err_t init_ethernet() {
     eth_config_t config = phy_lan8720_default_ethernet_config;
     esp_err_t ret;
 
     tcpip_adapter_init();
-    ESP_ERROR_CHECK(esp_event_loop_init(NULL, NULL));
+    esp_event_loop_init(NULL, NULL);
+    nested_callback = esp_event_loop_set_cb(event_handler, NULL);
 
     config.phy_addr = 0;
     config.gpio_config = eth_gpio_config_rmii;

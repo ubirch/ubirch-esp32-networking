@@ -26,6 +26,14 @@
 #ifndef UBIRCH_NETWORKING_H
 #define UBIRCH_NETWORKING_H
 
+#include <freertos/FreeRTOS.h>
+#include <freertos/event_groups.h>
+
+#define NETWORK_STA_READY   BIT1
+#define NETWORK_ETH_READY   BIT2
+
+extern EventGroupHandle_t network_event_group;
+
 #include "networking_wifi.h"
 #include "networking_eth.h"
 

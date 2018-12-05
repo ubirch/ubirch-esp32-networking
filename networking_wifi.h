@@ -25,10 +25,6 @@
 #ifndef UBIRCH_NETWORKING_WIFI_H
 #define UBIRCH_NETWORKING_WIFI_H
 
-#define CONNECTED_BIT   BIT0
-#define CONFIGURED_BIT  BIT1
-#define READY_BIT       BIT15
-
 struct Wifi_login {
     char *ssid;
     size_t ssid_length;
