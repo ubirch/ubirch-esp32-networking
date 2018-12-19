@@ -29,6 +29,8 @@
 
 /*!
  * Get the time from NTP server and set up RTC.
+ *
+ * @note    This function tries to connect to the sntp server for 10 times and wait 1 second in between.
  */
 void sntp_update(void);
 

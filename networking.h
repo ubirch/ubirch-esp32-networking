@@ -1,6 +1,6 @@
 /*!
- * @file
- * @brief Networking functionality.
+ * @file    networking.h
+ * @brief   Networking functionality.
  *
  * Provides access to Wifi and Ethernet functionality.
  *

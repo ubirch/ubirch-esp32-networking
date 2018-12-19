@@ -1,6 +1,6 @@
 /*!
- * @file
- * @brief Ethernet initialization.
+ * @file    networking_eth.c
+ * @brief   Ethernet initialization.
  *
  *
  * @author Matthias L. Jugel
