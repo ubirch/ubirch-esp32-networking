@@ -35,7 +35,7 @@ struct Wifi_login {
 /*!
  * Initialize the wifi module and connect to the provided SSID.
  */
-void initialise_wifi(void);
+void init_wifi(void);
 
 
 /*!

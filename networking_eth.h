@@ -1,6 +1,6 @@
 /*!
- * @file
- * @brief TODO: ${FILE}
+ * @file    networking_eth.h
+ * @brief   Ethernet initialization
  *
  * ...
  *

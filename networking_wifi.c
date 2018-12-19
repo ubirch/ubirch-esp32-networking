@@ -64,7 +64,8 @@ static esp_err_t event_handler(void *ctx, system_event_t *event) {
     return ESP_OK;
 }
 
-void initialise_wifi(void) {
+
+void init_wifi(void) {
     esp_log_level_set("wifi", ESP_LOG_WARN);
     static bool initialized = false;
     if (initialized) {
@@ -81,6 +82,7 @@ void initialise_wifi(void) {
     ESP_ERROR_CHECK(esp_wifi_start());
     initialized = true;
 }
+
 
 esp_err_t wifi_join(struct Wifi_login wifi, int timeout_ms) {
     wifi_config_t wifi_config = {0};

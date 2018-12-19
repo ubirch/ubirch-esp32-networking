@@ -44,7 +44,7 @@ void sntp_update(void) {
     time_t now = 0;
     struct tm timeinfo = {0};
     int retry = 0;
-    const int retry_count = 20;
+    const int retry_count = 10;
     while (timeinfo.tm_year < (2017 - 1900) && ++retry < retry_count) {
         ESP_LOGI(TAG, "waiting for system time to be set... (%d/%d)", retry, retry_count);
         vTaskDelay(2000 / portTICK_PERIOD_MS);
