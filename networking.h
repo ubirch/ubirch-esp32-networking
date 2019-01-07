@@ -31,6 +31,7 @@
 
 #define NETWORK_STA_READY   BIT1
 #define NETWORK_ETH_READY   BIT2
+#define NETWORK_GSM_READY   BIT3
 
 extern EventGroupHandle_t network_event_group;
 
