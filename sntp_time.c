@@ -25,6 +25,7 @@
 
 #include <esp_log.h>
 #include <lwip/apps/sntp.h>
+#include <soc/rtc_wdt.h>
 #include "sntp_time.h"
 
 #define TAG "SNTP"
@@ -35,9 +36,9 @@ void sntp_update(void) {
     if (!initialized) {
         ESP_LOGD(TAG, "initializing");
         sntp_setoperatingmode(SNTP_OPMODE_POLL);
-        if (sntp_getserver(0) == IP_ADDR_ANY) {
+	    //       if (sntp_getserver(0) == IP_ADDR_ANY) {  TODO check why this line is here?
             sntp_setservername(0, "pool.ntp.org");
-        }
+	    //       }
         sntp_init();
         initialized = 1;
     }
@@ -58,5 +59,6 @@ void sntp_update(void) {
              timeinfo.tm_hour, timeinfo.tm_min, timeinfo.tm_sec);
 
     setenv("TZ", "UTC", 1);
+	rtc_wdt_feed();
     tzset();
 }
