@@ -34,6 +34,7 @@
 #define NETWORK_GSM_READY   BIT3
 #define SNMP_READY          BIT4
 #define C8Y_READY           BIT5
+#define IDLE_READY          BIT6
 
 extern EventGroupHandle_t network_event_group;
 
