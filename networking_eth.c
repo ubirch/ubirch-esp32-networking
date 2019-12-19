@@ -94,16 +94,16 @@ esp_err_t init_ethernet() {
 	eth_config_t config = phy_lan8720_default_ethernet_config;
 	esp_err_t ret;
 
-	tcpip_adapter_ip_info_t ipInfo, myIp;
+	tcpip_adapter_ip_info_t myIp;
 
-	IP4_ADDR(&myIp.ip, 10, 100, 40, 95);
-	IP4_ADDR(&myIp.gw, 10, 100, 40, 1);
-	IP4_ADDR(&myIp.netmask, 255, 255, 255, 0);
+//	IP4_ADDR(&myIp.ip, 10, 100, 40, 95);
+//	IP4_ADDR(&myIp.gw, 10, 100, 40, 1);
+//	IP4_ADDR(&myIp.netmask, 255, 255, 255, 0);
 
 	tcpip_adapter_init();
-	ret = tcpip_adapter_dhcpc_stop(
-			TCPIP_ADAPTER_IF_ETH); // ret=0x5000 -> tcpip_adapter_invalid_params, very old esp-idf didn't implementated this yet.
-	ESP_LOGI(TAG, "dhcp client stop RESULT: %d", ret);
+//	ret = tcpip_adapter_dhcpc_stop(
+//			TCPIP_ADAPTER_IF_ETH); // ret=0x5000 -> tcpip_adapter_invalid_params, very old esp-idf didn't implementated this yet.
+//	ESP_LOGI(TAG, "dhcp client stop RESULT: %d", ret);
 	tcpip_adapter_set_ip_info(TCPIP_ADAPTER_IF_ETH, &myIp);
 
 	esp_event_loop_init(NULL, NULL);
@@ -122,42 +122,3 @@ esp_err_t init_ethernet() {
 
 	return esp_eth_enable();
 }
-//
-//esp_err_t init_static_ip(){
-//	tcpip_adapter_ip_info_t ipInfo, myIp;
-//
-//	IP4_ADDR(&myIp.ip, 10, 100 , 40, 95);
-//	IP4_ADDR(&myIp.gw, 10, 100 , 40, 1);
-//	IP4_ADDR(&myIp.netmask, 255, 255 , 255, 0);
-//
-//
-////	// myIp -> structure that save your static ip settings
-////	inet_pton(AF_INET, myIp.ip,      &ipInfo.ip);
-////	inet_pton(AF_INET, myIp.gw, &ipInfo.gw);
-////	inet_pton(AF_INET, myIp.netmask, &ipInfo.netmask);
-//
-//	tcpip_adapter_init();
-//	esp_err_t ret = tcpip_adapter_dhcpc_stop(TCPIP_ADAPTER_IF_ETH); // ret=0x5000 -> tcpip_adapter_invalid_params, very old esp-idf didn't implementated this yet.
-//	ESP_LOGI(TAG, "dhcp client stop RESULT: %d", ret);
-//	tcpip_adapter_set_ip_info(TCPIP_ADAPTER_IF_ETH, &myIp);
-//
-//	esp_event_loop_init(system_event_cb, NULL);
-//	eth_config_t config = DEFAULT_ETHERNET_PHY_CONFIG; // Set the PHY address in the example configuration
-//	config.phy_addr = CONFIG_PHY_ADDRESS;
-//	config.gpio_config = eth_gpio_config_rmii;
-//	config.tcpip_input = tcpip_adapter_eth_input;
-//#ifdef CONFIG_PHY_USE_POWER_PIN
-//	// Replace the default 'power enable' function with an example-specific
-//    // one that toggles a power GPIO.
-//    config.phy_power_enable = phy_device_power_enable_via_gpio;
-//#endif
-//	ret = esp_eth_init(&config); // Init the ETH interface of ESP32
-//
-//	if (ret == ESP_OK) {
-//		ESP_LOGI(TAG, "ETH interface get inited correctly!!!");
-//		esp_eth_enable();
-//	} else {
-//		ESP_LOGE(TAG, "ETH interface inited not correct!");
-//	}
-//
-//}

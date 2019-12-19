@@ -36,7 +36,7 @@ void sntp_update(void) {
         ESP_LOGD(TAG, "initializing");
         sntp_setoperatingmode(SNTP_OPMODE_POLL);
 //	    if (sntp_getserver(0) == IP_ADDR_ANY) {
-//            sntp_setservername(0, "pool.ntp.org");
+            sntp_setservername(0, "pool.ntp.org");
 //	    }
         sntp_init();
         initialized = 1;
