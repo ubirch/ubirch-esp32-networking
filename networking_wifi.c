@@ -1,9 +1,12 @@
 /*!
- * @file    wifi.c
+ * @file    networking.c
  * @brief   Wifi initialization and connection functions
  *
  * @author Waldemar Gruenwald
  * @date   2018-10-10
+ *
+ * @note   update to esp-idf v4.2
+ * @note   based on esp-idf/examples/wifi/getting_started/station/main/station_example_main.c
  *
  * @copyright &copy; 2018 ubirch GmbH (https://ubirch.com)
  *
@@ -22,8 +25,8 @@
  * ```
  */
 #include <string.h>
-#include <tcpip_adapter.h>
-#include <esp_event_loop.h>
+#include <esp_netif.h>
+#include <esp_event.h>
 #include <esp_wifi.h>
 #include <esp_log.h>
 #include <freertos/event_groups.h>
@@ -51,6 +54,7 @@ static void event_handler(void* arg, esp_event_base_t event_base,
 			ESP_LOGI(TAG, "retry to connect to the AP");
 		} else {
 			ESP_LOGI(TAG, "maximum retries exceeded");
+			xEventGroupClearBits(network_event_group,WIFI_CONNECTED_BIT);
 		}
 		ESP_LOGI(TAG,"connect to the AP fail");
 	} else if (event_base == IP_EVENT && event_id == IP_EVENT_STA_GOT_IP) {
@@ -126,7 +130,7 @@ esp_err_t wifi_join(struct Wifi_login wifi, int timeout_ms) {
 		ESP_LOGI(__func__, "connected ");
 		return ESP_OK;
 	} else {
-		ESP_LOGE(__func__, "UNEXPECTED EVENT");
+		ESP_LOGW(__func__, "failed to connect");
 		return ESP_FAIL;
 	}
 }

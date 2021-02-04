@@ -43,8 +43,8 @@ void init_wifi(void);
  *
  * @param wifi  structure with Wifi SSID and PWD information
  * @param timeout_ms time until timeout
- * @return true, if connection sucessful
- * @return false, if error occured
+ * @return true, if connection successful
+ * @return false, if error occurred
  */
 esp_err_t wifi_join(struct Wifi_login wifi, int timeout_ms);
 
