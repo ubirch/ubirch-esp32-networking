@@ -100,7 +100,9 @@ void init_wifi(void) {
 esp_err_t wifi_join(struct Wifi_login wifi, int timeout_ms) {
 	// reset the connection establishing values
 	s_retry_num = 0;
+	esp_wifi_disconnect();
 	ESP_ERROR_CHECK(esp_wifi_stop() );
+	xEventGroupClearBits(network_event_group,WIFI_CONNECTED_BIT);
 	// now try again
 	wifi_config_t wifi_config = {0};
 	strncpy((char *) wifi_config.sta.ssid, wifi.ssid, wifi.ssid_length);
