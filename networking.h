@@ -29,9 +29,12 @@
 #include <freertos/FreeRTOS.h>
 #include <freertos/event_groups.h>
 
-#define NETWORK_STA_READY   BIT1
+#define NETWORK_STA_READY   BIT1 // todo cleanup
 #define NETWORK_ETH_READY   BIT2
 #define NETWORK_GSM_READY   BIT3
+
+#define WIFI_CONNECTED_BIT BIT4
+#define WIFI_FAIL_BIT      BIT5
 
 extern EventGroupHandle_t network_event_group;
 
